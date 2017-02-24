@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <script src="jquery-3.1.1.js" type="text/javascript"></script>
+    </head>
+    <body>
+        
+
+<form id="uploadForm" enctype="multipart/form-data" action="/api/photo" method="post">
+    <input type="file" name="userPhoto" multiple  />
+    <input type="submit" value="Upload Image" name="submit">
+</form>
+<!--
+<form id="test2" action="" method="post">
+    <input type="text" name="user_name" />
+    <input type="file" name="user_file" />
+    <button type="submit">Submit</button>
+</form>
+-->
+<!--
+<script>
+var form = document.querySelector("#test2");
+
+form.addEventListener("submit", function (e) {
+        // Prevents the standard submit event
+    e.preventDefault();
+    var fdata = new FormData(this);
+
+    // Optional. Append custom data.
+    fdata.append('user_city', 'Los Angeles');
+
+    ajaxFileUpload(fdata);
+
+
+    return false;
+}, false);
+</script>
+
+<script>
+var ajaxFileUpload = function (file) {
+    var reader = new FileReader()
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/photo", true);
+    xhr.addEventListener("load", function (e) {
+        // file upload is complete
+        console.log(xhr.responseText);
+    });
+    reader.addEventListener("load", function (e) {
+        xhr.sendAsBinary(e.target.result);
+    });
+    reader.readAsBinaryString(file);
+};
+</script>
+-->
+
+<script>
+var form = $('form#uploadForm').get(0); //document.querySelector('#uploadForm');
+var fileField = document.querySelector('[name="userPhoto"]');
+
+form.addEventListener('submit', function(e){
+    //e.preventDefault();
+    processForm(e);
+})
+
+function processForm(e) {
+    e.preventDefault();
+
+    var formdata = false;
+    formData = new FormData(form);
+    if(fileField.value) {
+        var fileList = fileField.files;
+        for(var x=0;x<fileList.length;x++) {
+            //formData.append('file'+x,  fileList.item(x));
+            
+            console.log("File List ::", fileList[x].name, fileList[x]);
+
+            formData.append('userpic[]', fileList[x].name, fileList[x]);
+        }
+    }
+
+   
+    /*
+    $.ajax({
+        url         : '/api/photo',
+        data        : formdata ? formdata : $('form#uploadForm').serialize(),
+        cache       : false,
+        contentType : false,
+        processData : false,
+        type        : 'POST',
+        success     : function(data, textStatus, jqXHR){
+            // Callback code
+            console.log(data, textStatus, jqXHR);
+        }
+    });*/
+
+    
+    fetch('/api/photo', {
+        method:'POST',
+        body:formData   
+    }).then(function(res) {
+        console.log('Status', res);
+    }).catch(function(e) {
+        console.log('Error',e);
+    });
+    
+
+}
+</script>
+    </body>
+</html>
